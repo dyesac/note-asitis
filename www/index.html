@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src='https://cdn.jsdelivr.net/gh/rsms/markdown-wasm@v1.1.2/dist/markdown.js'></script>
+
+</head>
+<body>
+    <div id="md-content"></div>
+   <script>
+       window.onload = function(){
+
+           const url = new URL(window.location.href);
+           const params = url.searchParams
+           const page = params.get('page')
+           generateContent(page)
+
+       }
+       var generateContent = function(target){
+            var MD_URL = './mds/'+ target +'.md'
+            var xhr = new XMLHttpRequest();
+            // ハンドラの登録.
+            // onreadystatechange はどんなブラウザでも実装されている.
+            xhr.onreadystatechange = function() {
+                switch ( xhr.readyState ) {
+                    case 0: // 未初期化状態.
+                        console.log( 'uninitialized!' );
+                        break;
+                    case 1: // データ送信中.
+                        console.log( 'loading...' );
+                        break;
+                    case 2: // 応答待ち.
+                        console.log( 'loaded.' );
+                        break;
+                    case 3: // データ受信中.
+                        console.log( 'interactive... '+xhr.responseText.length+' bytes.' );
+                        break;
+                    case 4: // データ受信完了.
+                        if( xhr.status == 200 || xhr.status == 304 ) {
+                            var data = xhr.responseText; // responseXML もあり
+                            console.log( 'COMPLETE!');
+                            document.getElementById('md-content').innerHTML += markdown.parse(data)
+                        } else {
+                            console.log( 'Failed. HttpStatus: '+xhr.statusText );
+                        }
+                        break;
+                }
+            };
+            xhr.open('GET',MD_URL);
+            xhr.send();
+        }
+
+
+</script> 
+
+
+</body>
+</html>
